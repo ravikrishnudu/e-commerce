@@ -6,12 +6,28 @@ document.addEventListener("DOMContentLoaded", function () {
     navLinks.classList.toggle("show");
   });
 
-  const shopNowBtn = document.getElementById("shopNowBtn");
+  const productName = document.getElementById("logo");
+  if (productName) {
+    productName.addEventListener("click", () => {
+      window.location.href = "./index.html";
+    });
+  }
+
+  const shopNowBtn =
+    document.getElementById("shopNowBtn") ||
+    document.getElementById("productHome");
   if (shopNowBtn) {
     shopNowBtn.addEventListener("click", () => {
       window.location.href = "../pages/shop.html";
     });
   }
+
+  // const shopNowBtn = document.getElementById("shopNowBtn");
+  // if (shopNowBtn) {
+  //   shopNowBtn.addEventListener("click", () => {
+  //     window.location.href = "../pages/productDetails/productDetails.html";
+  //   });
+  // }
 
   const productSearch = document.getElementById("productSearch");
 
@@ -111,13 +127,26 @@ document.addEventListener("DOMContentLoaded", function () {
       productElement.className = "productList";
 
       productElement.innerHTML = `
-                <img src="${product.image}" alt="${product.title}">
-                <h3>${product.title}</h3>
-                <p>$${product.price}</p>
-            `;
+        <img src="${product.image}" alt="${product.title}">
+        <h3 class="product-title" data-id="${product.id}">${product.title}</h3>
+        <p>$${product.price}</p>
+      `;
 
       productsContainer.appendChild(productElement);
     });
+
+    // Add event listeners to the product titles
+    // document.querySelectorAll(".product-title").forEach((title) => {
+    //   title.addEventListener("click", function () {
+    //     const productId = this.getAttribute("data-id");
+    //     window.location.href = `../pages/productDetails/productDetails.html?id=${productId}`;
+
+    //     console.log(window.location.href, "window.location.href");
+    //   });
+    // });
+
+    productDetails();
+
     updateTotalProductCount();
     checkLoadMoreButton();
   }
@@ -283,4 +312,37 @@ document.addEventListener("DOMContentLoaded", function () {
     productsContainer.innerHTML = "";
     populateProducts(0, loadedProductsCount);
   }
+
+  function productDetails() {
+    const params = new URLSearchParams(window.location.search);
+    const productId = params.get("id");
+
+    console.log(productId, "productId");
+    // Find the product with the matching ID
+    const productDetails = allProducts.find((p) => p.id === productId);
+
+    console.log(productDetails, "product");
+
+    if (productDetails) {
+      document.getElementById("product-image").src = productDetails.image;
+      document.getElementById("product-title").textContent =
+        productDetails.title;
+      document.getElementById(
+        "product-price"
+      ).textContent = `$${productDetails.price}`;
+      document.getElementById("product-description").textContent =
+        productDetails.description;
+    } else {
+      console.error("Product not found");
+    }
+  }
+
+  if (window.location.pathname.includes("productDetails.html")) {
+    productDetails();
+  }
 });
+
+
+
+
+
